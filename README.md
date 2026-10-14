@@ -36,11 +36,23 @@ Use Codex custom agent directories exactly as documented:
 - `.codex/agents/` for project-specific agents (higher precedence in that repo)
 
 1. Clone this repository.
-2. Copy the `.toml` agent files you want into one of the directories above.
+2. Run `python3 install_agents.py` to install all agents globally, or copy selected `.toml` files into one of the directories above.
 3. Restart or refresh your Codex session if needed.
 4. Delegate explicitly in prompts (Codex does not auto-spawn custom subagents).
 
-Examples:
+Install all agents with Python 3 (no additional dependencies):
+
+```bash
+python3 install_agents.py                       # Defaults to ~/.codex/agents
+python3 install_agents.py /path/to/target        # Custom destination
+python3 install_agents.py .codex/agents          # Current project's agents
+```
+
+The installer creates the target directory and copies all `categories/**/*.toml`
+files directly into it. Matching filenames are overwritten on subsequent runs;
+other files are retained. You can run the script from any working directory.
+
+To install individual agents manually:
 ```bash
 mkdir -p ~/.codex/agents
 cp categories/01-core-development/backend-developer.toml ~/.codex/agents/
@@ -96,7 +108,7 @@ Each subagent uses a Codex-native `.toml` format:
 ```toml
 name = "subagent-name"
 description = "When this agent should be invoked"
-model = "gpt-5.6-luna"
+model = "gpt-6-luna"
 model_reasoning_effort = "medium"
 sandbox_mode = "read-only"
 
@@ -114,9 +126,8 @@ Each subagent includes a `model` field that automatically routes it to the right
 
 | Model | When It's Used | Examples |
 |-------|----------------|----------|
-| `gpt-5.6-sol` | Deep reasoning -- architecture reviews, security audits, financial logic | `security-auditor`, `architect-reviewer`, `fintech-engineer` |
-| `gpt-5.6-terra` | Implementation, diagnostics, evaluation, and multi-step professional analysis | `docker-expert`, `test-automator`, `scientific-literature-researcher` |
-| `gpt-5.6-luna` | Bounded search, extraction, routing, drafting, and lightweight synthesis | `search-specialist`, `docs-researcher`, `agent-installer` |
+| `gpt-6.1-sol` | Implementation, diagnostics, evaluation, deep reasoning, architecture reviews, and security audits | `security-auditor`, `architect-reviewer`, `docker-expert`, `test-automator` |
+| `gpt-6-luna` | Bounded search, extraction, routing, drafting, and lightweight synthesis | `search-specialist`, `docs-researcher`, `agent-installer` |
 
 ### Sandbox Mode Philosophy
 
